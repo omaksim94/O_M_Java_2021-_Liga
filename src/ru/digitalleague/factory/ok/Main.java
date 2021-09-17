@@ -1,11 +1,7 @@
 package ru.digitalleague.factory.ok;
 
-import ru.digitalleague.factory.ok.notification.Notification;
-import ru.digitalleague.factory.ok.notification.factory.NotificationFactory;
-import ru.digitalleague.factory.ok.notification.factory.MailNotificationFactory;
-import ru.digitalleague.factory.ok.notification.factory.PhoneNotificationFactory;
-
-import java.util.UUID;
+import ru.digitalleague.factory.ok.notification.*;
+import ru.digitalleague.factory.ok.notification.factory.*;
 
 public class Main {
 
@@ -13,8 +9,12 @@ public class Main {
         User user = new User(2L, "Денис", "denis@gmail.com", "+79522668105");
 
         NotificationFactory factory = true ? new MailNotificationFactory() : new PhoneNotificationFactory();
+        Notification welcomeMessage = new Translator(factory.makeNotification(Messages.WELCOME, user));
+        sendNotification(welcomeMessage);
+        System.out.println();
 
-        sendNotification(factory.makeNotification("Доброго дня!", user));
+        Notification welcomeMessage2 = factory.makeNotification(Messages.WELCOME, user);
+        sendNotification(welcomeMessage2);
     }
 
     private static void sendNotification(Notification notification) {

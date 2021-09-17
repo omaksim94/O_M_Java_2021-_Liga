@@ -3,21 +3,22 @@ package ru.digitalleague.factory.ok.notification;
 
 import ru.digitalleague.factory.ok.User;
 
-public class PhoneNotification implements Notification {
+public class PhoneNotification extends Notification {
 
-    private String body;
+    private Messages type;
     private User user;
 
-    public PhoneNotification(String body, User user) {
-        this.body = body;
+    public PhoneNotification(Messages type, User user) {
+        this.type = type;
         this.user = user;
     }
 
     public String getText() {
         return String.format(
-                "Phone #%s\n%s",
-                user.getPhone(),
-                body
+                rb.getString(type.toString()),
+                user.getName(),
+                user.getEmail(),
+                user.getPhone()
         );
     }
 }

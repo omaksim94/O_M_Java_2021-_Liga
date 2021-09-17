@@ -1,27 +1,23 @@
 package ru.digitalleague.factory.ok.notification;
 
-
 import ru.digitalleague.factory.ok.User;
 
-public class MailNotification implements Notification {
+public class MailNotification extends Notification {
 
-    private String body;
+    private Messages type;
     private User user;
-    private boolean hasAdvertisement;
 
-    public MailNotification(String body, User user, boolean hasAdvertisement) {
-        this.body = body;
+    public MailNotification(Messages type, User user) {
+        this.type = type;
         this.user = user;
-        this.hasAdvertisement = hasAdvertisement;
     }
 
     public String getText() {
         return String.format(
-                "Address: %s\nУважаемый %s,\n%s%s\nС уважением, команда поддержки!",
-                user.getEmail(),
+                rb.getString(type.toString()),
                 user.getName(),
-                body,
-                hasAdvertisement ? "\n\nПокупайте наши товары!\n" : ""
+                user.getEmail(),
+                user.getPhone()
         );
     }
 }
