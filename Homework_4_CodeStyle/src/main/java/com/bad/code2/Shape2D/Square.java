@@ -1,4 +1,4 @@
-package com.bad.code2.Shape3D;
+package com.bad.code2.Shape2D;
 
 import com.bad.code2.Shape2D.Shape2D;
 

@@ -1,7 +1,7 @@
 package com.bad.code2;
 
-import com.bad.code2.Shape2D.Cube;
-import com.bad.code2.Shape3D.Square;
+import com.bad.code2.Shape3D.Cube;
+import com.bad.code2.Shape2D.Square;
 
 public class BadCode2 {
     public static void main(String... args) {
