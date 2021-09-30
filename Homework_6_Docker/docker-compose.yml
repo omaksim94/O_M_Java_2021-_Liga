@@ -1,0 +1,13 @@
+version: '3'
+services:
+  db:
+    build: .
+    restart: always
+#    volumes:
+#      - ./pgdata:/home/app/data
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: schools
+      TZ: Europe/Moscow

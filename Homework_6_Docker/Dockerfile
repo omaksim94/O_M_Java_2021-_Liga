@@ -1,0 +1,6 @@
+FROM postgres:alpine
+WORKDIR /home/app
+
+EXPOSE 5432
+COPY *.sql /docker-entrypoint-initdb.d/
+
