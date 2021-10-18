@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class JwtTokenVerifier extends OncePerRequestFilter {
 
     private final UserDetailsService personService;
+    private final JwtConfig jwtConfig;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -43,7 +45,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         try {
             String token = authorizationHeader.replace("Bearer ", "");
             Jws<Claims> claimsJws = Jwts.parser()
-                    .setSigningKey("c2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5Xw")
+                    .setSigningKey(jwtConfig.getSecretKey())
                     .parseClaimsJws(token);
 
             String username = claimsJws.getBody().getSubject();

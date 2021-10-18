@@ -10,6 +10,7 @@ import com.socialnetwork.demo.repository.AuthoritiesRepository;
 import com.socialnetwork.demo.repository.FriendLinkRepository;
 import com.socialnetwork.demo.repository.PersonRepository;
 import com.socialnetwork.demo.repository.SchoolRepository;
+import com.socialnetwork.demo.security.SecurityConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,7 +35,7 @@ public class PersonService implements UserDetailsService {
     private final SchoolRepository schoolRepository;
     private final FriendLinkRepository friendLinkRepository;
     private final AuthoritiesRepository authoritiesRepository;
-    private PasswordEncoder encoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder = SecurityConfiguration.encoder();
 
 
     public List<Person> getPeople() {
@@ -55,7 +56,7 @@ public class PersonService implements UserDetailsService {
         newPerson.setAge(Integer.parseInt(json.get("age")));
         newPerson.setGender(json.get("gender"));
         newPerson.setUsername(json.get("username"));
-        newPerson.setPassword(encoder.encode(json.get("password")));
+        newPerson.setPassword(passwordEncoder.encode(json.get("password")));
         newPerson.setAccountNonExpired(true);
         newPerson.setAccountNonLocked(true);
         newPerson.setCredentialsNonExpired(true);

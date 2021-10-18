@@ -3,11 +3,13 @@ package com.socialnetwork.demo.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -17,13 +19,11 @@ import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
 
+@RequiredArgsConstructor
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-
-    public JwtUsernameAndPasswordAuthenticationFilter(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
+    private final JwtConfig jwtConfig;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -53,7 +53,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .claim("Authorities", authResult.getAuthorities())
                 .setIssuedAt(new java.util.Date())
                 .setExpiration(Date.valueOf(LocalDate.now().plusWeeks(2)))
-                .signWith(SignatureAlgorithm.HS256, "c2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5X3NlY3JldEtleV9zZWNyZXRLZXlfc2VjcmV0S2V5Xw")
+                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecretKey())
                 .compact();
 
         response.addHeader("Authorization", "Bearer " + token);
