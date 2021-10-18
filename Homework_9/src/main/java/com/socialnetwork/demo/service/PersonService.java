@@ -1,19 +1,19 @@
 package com.socialnetwork.demo.service;
 
+import com.socialnetwork.demo.model.Authorities;
 import com.socialnetwork.demo.model.DTO.AccountDetails;
-import com.socialnetwork.demo.model.*;
 import com.socialnetwork.demo.model.DTO.PersonDTO;
+import com.socialnetwork.demo.model.FriendLink;
+import com.socialnetwork.demo.model.Person;
+import com.socialnetwork.demo.model.School;
 import com.socialnetwork.demo.repository.AuthoritiesRepository;
 import com.socialnetwork.demo.repository.FriendLinkRepository;
 import com.socialnetwork.demo.repository.PersonRepository;
 import com.socialnetwork.demo.repository.SchoolRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

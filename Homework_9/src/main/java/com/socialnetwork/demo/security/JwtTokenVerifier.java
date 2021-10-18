@@ -4,15 +4,14 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -25,7 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
+
+    private final UserDetailsService personService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -45,9 +47,18 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
                     .parseClaimsJws(token);
 
             String username = claimsJws.getBody().getSubject();
+
+            UserDetails userDetails = personService.loadUserByUsername(username);
+            if (!userDetails.isAccountNonExpired() ||
+                    !userDetails.isAccountNonLocked() ||
+                    !userDetails.isEnabled() ||
+                    !userDetails.isCredentialsNonExpired()) {
+                throw new IllegalStateException("Token cannot be trusted");
+            }
+
             var authorities = (List<Map<String, String>>) claimsJws.getBody().get("Authorities");
             List<GrantedAuthority> grantedAuthorityList = new ArrayList<>();
-            if (authorities != null){
+            if (authorities != null) {
                 grantedAuthorityList = authorities.stream()
                         .map(auth -> new SimpleGrantedAuthority("ROLE_" + auth.get("authority")))
                         .collect(Collectors.toList());
