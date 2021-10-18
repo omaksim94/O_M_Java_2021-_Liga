@@ -1,4 +1,4 @@
-package com.socialnetwork.demo.DTO;
+package com.socialnetwork.demo.model.DTO;
 
 import com.socialnetwork.demo.model.Person;
 import lombok.Getter;
@@ -19,12 +19,12 @@ public class PersonDTO {
 
     public PersonDTO(Person person) {
         this.personId = person.getId();
-        this.first_name = person.getFirst_name();
-        this.last_name = person.getLast_name();
+        this.first_name = person.getFirstName();
+        this.last_name = person.getLastName();
         this.age = person.getAge();
         this.gender = person.getGender();
         if (person.getSchool() != null) {
-            this.schoolname = person.getSchool().getSchool_name();
+            this.schoolname = person.getSchool().getSchoolName();
         } else {
             this.schoolname = "Not set";
         }

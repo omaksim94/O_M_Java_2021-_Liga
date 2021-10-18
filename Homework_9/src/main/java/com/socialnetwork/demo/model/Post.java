@@ -15,7 +15,7 @@ public class Post {
     @GeneratedValue
     @Column(name = "post_uid", unique = true, length = 16)
     protected UUID id;
-    @Column(nullable = false, length = 1024)
+    @Column(name = "description", nullable = false, length = 1024)
     private String description;
     @JoinColumn(name = "person_uid")
     @ManyToOne

@@ -19,7 +19,8 @@ import java.util.UUID;
 @Table(name = "friendlist")
 public class FriendLink {
     @Id
-    private String friendlink_id;
+    @Column(name = "friendlink_id")
+    private String friendlinkId;
     @JoinColumn(name = "person_uid")
     @ManyToOne
     private Person person;
@@ -31,9 +32,9 @@ public class FriendLink {
         UUID personId = person.getId();
         UUID friendId = friend.getId();
         if (personId.compareTo(friendId) <= 0) {
-            this.friendlink_id = "" + personId + ":" + friendId;
+            this.friendlinkId = "" + personId + ":" + friendId;
         } else if (personId.compareTo(friendId) == 1) {
-            this.friendlink_id = "" + friendId + ":" + personId;
+            this.friendlinkId = "" + friendId + ":" + personId;
         }
         this.person = person;
         this.friend = friend;
@@ -46,7 +47,7 @@ public class FriendLink {
     @Override
     public String toString() {
         return "FriendLink{" +
-                "friendship_id='" + friendlink_id + '\'' +
+                "friendship_id='" + friendlinkId + '\'' +
                 ", person=" + person +
                 ", friend=" + friend +
                 '}';

@@ -1,15 +1,25 @@
 package com.socialnetwork.demo.service;
 
-import com.socialnetwork.demo.model.FriendLink;
-import com.socialnetwork.demo.model.Person;
-import com.socialnetwork.demo.model.School;
+import com.socialnetwork.demo.model.DTO.AccountDetails;
+import com.socialnetwork.demo.model.*;
+import com.socialnetwork.demo.model.DTO.PersonDTO;
+import com.socialnetwork.demo.repository.AuthoritiesRepository;
 import com.socialnetwork.demo.repository.FriendLinkRepository;
 import com.socialnetwork.demo.repository.PersonRepository;
 import com.socialnetwork.demo.repository.SchoolRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,30 +28,38 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PersonService {
+@Transactional(readOnly = true)
+public class PersonService implements UserDetailsService {
     private final PersonRepository personRepository;
     private final SchoolRepository schoolRepository;
     private final FriendLinkRepository friendLinkRepository;
+    private final AuthoritiesRepository authoritiesRepository;
+    private PasswordEncoder encoder = new BCryptPasswordEncoder();
+
 
     public List<Person> getPeople() {
         return personRepository.findAll();
     }
 
-    public Optional<Person> getPerson(UUID personId) {
-        Optional<Person> optionalPerson = personRepository.findById(personId);
-        if (optionalPerson.isEmpty()) {
-            throw new IllegalStateException("No person with ID: " + personId);
-        }
-        return optionalPerson;
+    public PersonDTO getPerson(UUID personId) {
+        return personRepository.findById(personId)
+                .map(PersonDTO::new)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     @Transactional
     public void addNewPerson(Map<String, String> json) {
         Person newPerson = new Person();
-        newPerson.setFirst_name(json.get("first_name"));
-        newPerson.setLast_name(json.get("last_name"));
+        newPerson.setFirstName(json.get("first_name"));
+        newPerson.setLastName(json.get("last_name"));
         newPerson.setAge(Integer.parseInt(json.get("age")));
         newPerson.setGender(json.get("gender"));
+        newPerson.setUsername(json.get("username"));
+        newPerson.setPassword(encoder.encode(json.get("password")));
+        newPerson.setAccountNonExpired(true);
+        newPerson.setAccountNonLocked(true);
+        newPerson.setCredentialsNonExpired(true);
+        newPerson.setEnabled(true);
         if (json.containsKey("school")) {
             School school = schoolRepository.getById(UUID.fromString(json.get("school")));
             newPerson.setSchool(school);
@@ -59,11 +77,11 @@ public class PersonService {
     public void editPerson(UUID personId, Map<String, String> json) {
         Person editedPerson = personRepository.getById(personId);
         if (json.containsKey("first_name")) {
-            editedPerson.setFirst_name(json.get("first_name"));
+            editedPerson.setFirstName(json.get("first_name"));
         }
 
         if (json.containsKey("last_name")) {
-            editedPerson.setLast_name(json.get("last_name"));
+            editedPerson.setLastName(json.get("last_name"));
         }
 
         if (json.containsKey("age")) {
@@ -92,10 +110,10 @@ public class PersonService {
 
     @Transactional
     public void removeFriend(UUID personId, UUID friendId) {
-        String friendLink_id = createFriendLinkId(personId, friendId);
+        String friendLinkId = createFriendLinkId(personId, friendId);
 
-        if (friendLinkRepository.findById(friendLink_id).isPresent()) {
-            friendLinkRepository.deleteById(friendLink_id);
+        if (friendLinkRepository.findById(friendLinkId).isPresent()) {
+            friendLinkRepository.deleteById(friendLinkId);
         }
     }
 
@@ -115,10 +133,9 @@ public class PersonService {
      * Из двух Id берет, то, которое не совпадает с Id пользователя
      * Собирает список друзей в лист
      */
-    @Transactional
-    public List<Person> getFriends(UUID personId) {
+    public List<PersonDTO> getFriends(UUID personId) {
 
-        return personRepository.getById(personId).getFriendList().stream()
+         List<Person> personList = personRepository.getById(personId).getFriendList().stream()
                 .map(link -> {
                     if (link.getPerson().getId().equals(personId)) {
                         return link.getFriend();
@@ -127,5 +144,25 @@ public class PersonService {
                     }
                 })
                 .collect(Collectors.toList());
+
+        return personList.stream()
+                .map(PersonDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<Person> optionalAccount = personRepository.findByUsername(username);
+        Person account = optionalAccount
+                .orElseThrow(() -> new UsernameNotFoundException("User with name: " + username + " not found"));
+        return new AccountDetails(account);
+    }
+
+    @Transactional
+    public void addRole(UUID personId, Long roleId) {
+        Authorities role = authoritiesRepository.getById(roleId);
+        Person person = personRepository.getById(personId);
+        person.getAuthorities().add(role);
+        personRepository.save(person);
     }
 }

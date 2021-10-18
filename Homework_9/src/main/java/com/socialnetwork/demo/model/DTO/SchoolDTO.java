@@ -1,4 +1,4 @@
-package com.socialnetwork.demo.DTO;
+package com.socialnetwork.demo.model.DTO;
 
 import com.socialnetwork.demo.model.School;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class SchoolDTO {
 
     public SchoolDTO(School school) {
         this.schoolId = school.getId();
-        this.school_name = school.getSchool_name();
+        this.school_name = school.getSchoolName();
         this.address = school.getAddress();
     }
 

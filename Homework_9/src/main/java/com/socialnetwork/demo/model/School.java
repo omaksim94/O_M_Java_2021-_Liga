@@ -17,9 +17,9 @@ public class School {
     @GeneratedValue
     @Column(name = "school_uid", unique = true, length = 16)
     protected UUID id;
-    @Column(nullable = false)
-    private String school_name;
-    @Column(unique = true, length = 1024)
+    @Column(nullable = false, name = "school_name")
+    private String schoolName;
+    @Column(unique = true, length = 1024, name = "address")
     private String address;
     @Column
     @OneToMany(mappedBy = "school")
@@ -27,7 +27,7 @@ public class School {
     private Set<Person> person;
 
     public School(String school_name, String address) {
-        this.school_name = school_name;
+        this.schoolName = school_name;
         this.address = address;
     }
 
@@ -38,7 +38,7 @@ public class School {
     public String toString() {
         return "School{" +
                 "id=" + id +
-                ", school_name='" + school_name + '\'' +
+                ", school_name='" + schoolName + '\'' +
                 ", address='" + address + '\'' +
                 ", person=" + person +
                 '}';

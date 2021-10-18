@@ -1,6 +1,6 @@
 package com.socialnetwork.demo.controller;
 
-import com.socialnetwork.demo.DTO.SchoolDTO;
+import com.socialnetwork.demo.model.DTO.SchoolDTO;
 import com.socialnetwork.demo.service.SchoolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +18,12 @@ public class SchoolController {
 
     @GetMapping
     public List<SchoolDTO> getSchools() {
-        return schoolService.getSchools().stream()
-                .map(school -> new SchoolDTO(school))
-                .collect(Collectors.toList());
+        return schoolService.getSchools();
     }
 
     @GetMapping(path = "/{school_uid}")
-    public SchoolDTO getSchool(@PathVariable("school_uid") UUID school_uid) {
-        return new SchoolDTO(schoolService.getSchool(school_uid));
+    public SchoolDTO getSchool(@PathVariable("school_uid") UUID schoolId) {
+        return schoolService.getSchool(schoolId);
     }
 
     @PutMapping(path = "/edit/{schoolId}")

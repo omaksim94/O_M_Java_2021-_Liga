@@ -1,6 +1,6 @@
 package com.socialnetwork.demo.controller;
 
-import com.socialnetwork.demo.DTO.PostDTO;
+import com.socialnetwork.demo.model.DTO.PostDTO;
 import com.socialnetwork.demo.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,17 +17,12 @@ public class PostController {
 
     @GetMapping(path = "{personId}/posts")
     public List<PostDTO> getUserPosts(@PathVariable("personId") UUID personId) {
-        return postService.getUserPosts(personId).stream()
-                .map(post -> new PostDTO(post)
-                )
-                .collect(Collectors.toList());
+        return postService.getUserPosts(personId);
     }
 
     @GetMapping(path = "{personId}/feed")
     public List<PostDTO> getUserFriendsPosts(@PathVariable("personId") UUID personId) {
-        return postService.getUserFriendsPosts(personId).stream()
-                .map(post -> new PostDTO(post))
-                .collect(Collectors.toList());
+        return postService.getUserFriendsPosts(personId);
     }
 
     @PostMapping(path = "{personId}/post/new")

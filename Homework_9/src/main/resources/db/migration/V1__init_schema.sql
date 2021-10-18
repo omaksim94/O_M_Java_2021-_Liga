@@ -13,7 +13,13 @@ first_name VARCHAR(100) NOT NULL,
 last_name VARCHAR(100) NOT NULL,
 age INT NOT NULL,
 gender VARCHAR(6) NOT NULL,
-school_uid UUID REFERENCES school (school_uid)
+school_uid UUID REFERENCES school (school_uid),
+username VARCHAR(100) NOT NULL,
+password VARCHAR(200) NOT NULL,
+isAccountNonExpired boolean NOT NULL,
+isAccountNonLocked boolean NOT NULL,
+isCredentialsNonExpired boolean NOT NULL,
+isEnabled  boolean NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS post (
@@ -28,4 +34,12 @@ person_uid UUID NOT NULL REFERENCES person (person_uid),
 friend_uid UUID NOT NULL REFERENCES person (person_uid)
 );
 
+CREATE SEQUENCE authority_sequence;
 
+CREATE TABLE IF NOT EXISTS authority (
+authority_uid BIGSERIAL PRIMARY KEY,
+authority VARCHAR(100) NOT NULL
+);
+
+INSERT INTO authority (authority) VALUES('USER');
+INSERT INTO authority (authority) VALUES('ADMIN');

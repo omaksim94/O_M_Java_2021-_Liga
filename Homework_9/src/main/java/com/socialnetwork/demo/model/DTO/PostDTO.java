@@ -1,4 +1,4 @@
-package com.socialnetwork.demo.DTO;
+package com.socialnetwork.demo.model.DTO;
 
 import com.socialnetwork.demo.model.Post;
 import lombok.Getter;
@@ -16,8 +16,8 @@ public class PostDTO {
 
     public PostDTO(Post post) {
         this.postId = post.getId();
-        this.AuthorFirstName = post.getPerson().getFirst_name();
-        this.AuthorLastName = post.getPerson().getLast_name();
+        this.AuthorFirstName = post.getPerson().getFirstName();
+        this.AuthorLastName = post.getPerson().getLastName();
         this.description = post.getDescription();
     }
 

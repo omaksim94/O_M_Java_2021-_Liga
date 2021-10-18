@@ -1,6 +1,6 @@
 package com.socialnetwork.demo.controller;
 
-import com.socialnetwork.demo.DTO.PersonDTO;
+import com.socialnetwork.demo.model.DTO.PersonDTO;
 import com.socialnetwork.demo.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +19,13 @@ public class PersonController {
     @GetMapping(path = "/people")
     public List<PersonDTO> getPeople() {
         return personService.getPeople().stream()
-                .map(person -> new PersonDTO(person))
+                .map(PersonDTO::new)
                 .collect(Collectors.toList());
     }
 
     @GetMapping(path = "/{personId}")
     public PersonDTO getPerson(@PathVariable("personId") UUID personId) {
-        return new PersonDTO(personService.getPerson(personId).get());
+        return personService.getPerson(personId);
     }
 
     @PostMapping(path = "/person/new")
@@ -58,9 +58,13 @@ public class PersonController {
 
     @GetMapping(path = "{personId}/friends")
     public List<PersonDTO> getFriends(@PathVariable("personId") UUID personId) {
-        return personService.getFriends(personId).stream()
-                .map(person -> new PersonDTO(person))
-                .collect(Collectors.toList());
+        return personService.getFriends(personId);
+    }
+
+    @PutMapping(path = "/{personId}/add/role")
+    public void addRole(@PathVariable("personId") UUID personId,
+                        @RequestParam(required = true) Long roleId){
+        personService.addRole(personId, roleId);
     }
 
 }

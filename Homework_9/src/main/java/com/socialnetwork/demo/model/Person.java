@@ -1,29 +1,31 @@
 package com.socialnetwork.demo.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * @password - пароли у всех пользователей в БД = password
+ */
 @Entity
 @Table(name = "person")
-@Getter
-@Setter
+@Data
 public class Person {
     @Id
     @GeneratedValue
     @Column(unique = true, length = 16, name = "person_uid")
     protected UUID id;
-    @Column(nullable = false, length = 100)
-    private String first_name;
-    @Column(nullable = false, length = 100)
-    private String last_name;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100, name = "first_name")
+    private String firstName;
+    @Column(nullable = false, length = 100, name = "last_name")
+    private String lastName;
+    @Column(nullable = false, name = "age")
     private Integer age;
-    @Column(nullable = false, length = 6)
+    @Column(nullable = false, length = 6, name = "gender")
     private String gender;
     @JoinColumn(name = "school_uid")
     @ManyToOne
@@ -32,18 +34,36 @@ public class Person {
     @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
     @BatchSize(size = 10)
     private Set<Post> personPosts;
-
     @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
     @BatchSize(size = 10)
     private Set<FriendLink> friendList;
 
+    @Column
+    private String username;
+    @Column
+    private String password;
+    @Column
+    private boolean isAccountNonExpired;
+    @Column
+    private boolean isAccountNonLocked;
+    @Column
+    private boolean isCredentialsNonExpired;
+    @Column
+    private boolean isEnabled;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "account_authority",
+            joinColumns = {@JoinColumn(name = "person_id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_id")}
+    )
+    private List<Authorities> authorities;
 
     public Person(String first_name,
                   String last_name,
                   Integer age,
                   String gender) {
-        this.first_name = first_name;
-        this.last_name = last_name;
+        this.firstName = first_name;
+        this.lastName = last_name;
         this.age = age;
         this.gender = gender;
     }
@@ -53,8 +73,8 @@ public class Person {
                   Integer age,
                   String gender,
                   School school) {
-        this.first_name = first_name;
-        this.last_name = last_name;
+        this.firstName = first_name;
+        this.lastName = last_name;
         this.age = age;
         this.gender = gender;
         this.school = school;
@@ -64,17 +84,4 @@ public class Person {
     public Person() {
     }
 
-    @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", first_name='" + first_name + '\'' +
-                ", last_name='" + last_name + '\'' +
-                ", age=" + age +
-                ", gender='" + gender + '\'' +
-                ", school=" + school +
-                ", personPosts=" + personPosts +
-                ", friendList=" + friendList +
-                '}';
-    }
 }
