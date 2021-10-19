@@ -32,10 +32,10 @@ public class Person {
     private School school;
     @Column
     @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
-    @BatchSize(size = 10)
+    @BatchSize(size = 50)
     private Set<Post> personPosts;
     @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
-    @BatchSize(size = 10)
+    @BatchSize(size = 50)
     private Set<FriendLink> friendList;
 
     @Column

@@ -35,11 +35,12 @@ public class PersonService implements UserDetailsService {
     private final SchoolRepository schoolRepository;
     private final FriendLinkRepository friendLinkRepository;
     private final AuthoritiesRepository authoritiesRepository;
-    private final PasswordEncoder passwordEncoder = SecurityConfiguration.encoder();
+    private final PasswordEncoder passwordEncoder;
 
-
-    public List<Person> getPeople() {
-        return personRepository.findAll();
+    public List<PersonDTO> getPeople() {
+        return personRepository.findAll().stream()
+                .map(PersonDTO::new)
+                .collect(Collectors.toList());
     }
 
     public PersonDTO getPerson(UUID personId) {

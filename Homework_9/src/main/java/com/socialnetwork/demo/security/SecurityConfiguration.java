@@ -1,7 +1,6 @@
 package com.socialnetwork.demo.security;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -9,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -17,12 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService MyUserDetailsService;
+    private final UserDetailsService personService;
     private final JwtConfig jwtConfig;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(MyUserDetailsService).passwordEncoder(encoder());
+        auth.userDetailsService(personService).passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -31,8 +30,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(),jwtConfig))
-                .addFilterAfter(new JwtTokenVerifier(MyUserDetailsService, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(jwtConfig, authenticationManager()))
+                .addFilterAfter(new JwtTokenVerifier(personService, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/api/v1/people").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/api/**").hasAnyRole("ADMIN")
@@ -40,8 +39,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authenticated();
     }
 
-    @Bean
-    public static PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 }
