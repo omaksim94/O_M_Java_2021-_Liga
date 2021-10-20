@@ -1,5 +1,6 @@
 package com.socialnetwork.demo.model;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,8 +9,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "authority")
-@Setter
 @Getter
+@Setter
 public class Authorities {
 
     @Id

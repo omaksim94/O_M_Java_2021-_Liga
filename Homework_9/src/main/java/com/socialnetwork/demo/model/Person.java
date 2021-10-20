@@ -37,6 +37,10 @@ public class Person {
     @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
     @BatchSize(size = 50)
     private Set<FriendLink> friendList;
+    @OneToMany(mappedBy = "person1")
+    private List<Dialogue> dialogueList;
+    @OneToMany(mappedBy = "sender")
+    private List<Message> messageList;
 
     @Column
     private String username;

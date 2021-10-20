@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "api/v1/schools")
@@ -26,13 +25,13 @@ public class SchoolController {
         return schoolService.getSchool(schoolId);
     }
 
-    @PutMapping(path = "/edit/{schoolId}")
+    @PutMapping(path = "/{schoolId}")
     public void editSchool(@PathVariable("schoolId") UUID schoolId,
                            @RequestBody Map<String, String> json) {
         schoolService.editSchool(schoolId, json);
     }
 
-    @DeleteMapping(path = "/delete/{schoolId}")
+    @DeleteMapping(path = "/{schoolId}")
     public void deleteSchool(@PathVariable UUID schoolId) {
         schoolService.deleteSchool(schoolId);
     }

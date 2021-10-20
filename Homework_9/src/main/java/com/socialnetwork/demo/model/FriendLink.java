@@ -1,5 +1,6 @@
 package com.socialnetwork.demo.model;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

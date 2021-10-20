@@ -1,5 +1,6 @@
 package com.socialnetwork.demo.service;
 
+import com.socialnetwork.demo.exception.MyCustomException;
 import com.socialnetwork.demo.model.DTO.PostDTO;
 import com.socialnetwork.demo.model.Person;
 import com.socialnetwork.demo.model.Post;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +28,7 @@ public class PostService {
         if (description != null) {
             Optional<Person> optionalPerson = personRepository.findById(personId);
             if (optionalPerson.isEmpty()) {
-                throw new EntityNotFoundException("Something went wrong");
+                throw new MyCustomException("Can't add post, user doesn't exist");
             }
         }
         postRepository.save(new Post(description, personRepository.getById(personId)));

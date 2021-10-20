@@ -10,12 +10,13 @@ import com.socialnetwork.demo.repository.AuthoritiesRepository;
 import com.socialnetwork.demo.repository.FriendLinkRepository;
 import com.socialnetwork.demo.repository.PersonRepository;
 import com.socialnetwork.demo.repository.SchoolRepository;
-import com.socialnetwork.demo.security.SecurityConfiguration;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,16 +38,21 @@ public class PersonService implements UserDetailsService {
     private final AuthoritiesRepository authoritiesRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<PersonDTO> getPeople() {
-        return personRepository.findAll().stream()
-                .map(PersonDTO::new)
-                .collect(Collectors.toList());
+    public Page<PersonDTO> getPeople(int page, int size, String[] sort) {
+
+        if (sort[1].equals("asc")){
+            return personRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sort[0])))
+                    .map(PersonDTO::new);
+        } else {
+            return personRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sort[0])))
+                    .map(PersonDTO::new);
+        }
     }
 
     public PersonDTO getPerson(UUID personId) {
         return personRepository.findById(personId)
                 .map(PersonDTO::new)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + personId + " not found"));
     }
 
     @Transactional

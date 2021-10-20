@@ -34,7 +34,7 @@ person_uid UUID NOT NULL REFERENCES person (person_uid),
 friend_uid UUID NOT NULL REFERENCES person (person_uid)
 );
 
-CREATE SEQUENCE authority_sequence;
+CREATE SEQUENCE IF NOT EXISTS authority_sequence;
 
 CREATE TABLE IF NOT EXISTS authority (
 authority_uid BIGSERIAL PRIMARY KEY,
@@ -43,3 +43,18 @@ authority VARCHAR(100) NOT NULL
 
 INSERT INTO authority (authority) VALUES('USER');
 INSERT INTO authority (authority) VALUES('ADMIN');
+
+CREATE TABLE IF NOT EXISTS dialogue (
+id VARCHAR(73) PRIMARY KEY,
+sender_uid UUID NOT NULL REFERENCES person (person_uid),
+receiver_uid UUID NOT NULL REFERENCES person (person_uid)
+);
+
+CREATE TABLE IF NOT EXISTS message (
+id UUID PRIMARY KEY,
+date_time TIMESTAMP NOT NULL,
+text VARCHAR(500) NOT NULL,
+sender_uid UUID NOT NULL REFERENCES person (person_uid),
+receiver_uid UUID NOT NULL REFERENCES person (person_uid),
+dialogue_id VARCHAR(73) NOT NULL REFERENCES dialogue (id)
+);
